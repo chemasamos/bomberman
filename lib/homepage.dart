@@ -10,23 +10,84 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int numberOfSquares = 130;
   int playerPosition = 0;
+  int bombPosition= -1;
   List<int> barriers = [
-    11,13,15,17,18,
-    31,33,35,37,38,
-    51,53,55,57,58,
-    71,73,75,77,78,
-    91,93,95,97,98,
-    111,113,115,117,118,
+    11,
+    13,
+    15,
+    17,
+    18,
+    31,
+    33,
+    35,
+    37,
+    38,
+    51,
+    53,
+    55,
+    57,
+    58,
+    71,
+    73,
+    75,
+    77,
+    78,
+    91,
+    93,
+    95,
+    97,
+    98,
+    111,
+    113,
+    115,
+    117,
+    118,
   ];
 
   List<int> boxes = [
-    12,14,16,28,21,41,61,81,101,112,114,116,119,127,123,103,83,63,63,65,67,47,39,19,1,30,50,70,121,100,96,79,99,107,7,3
+    12,
+    14,
+    16,
+    28,
+    21,
+    41,
+    61,
+    81,
+    101,
+    112,
+    114,
+    116,
+    119,
+    127,
+    123,
+    103,
+    83,
+    63,
+    63,
+    65,
+    67,
+    47,
+    39,
+    19,
+    1,
+    30,
+    50,
+    70,
+    121,
+    100,
+    96,
+    79,
+    99,
+    107,
+    7,
+    3
   ];
 
   void moveUp() {
     setState(() {
-      if  (playerPosition - 10 >= 0 && 
-      !barriers.contains(playerPosition - 10) && !boxes.contains(playerPosition - 10)) {
+      if (playerPosition - 10 >= 0 &&
+          !barriers.contains(playerPosition - 10) &&
+          !boxes.contains(playerPosition - 10)) {
         playerPosition -= 10;
       }
     });
@@ -34,7 +95,9 @@ class _HomePageState extends State<HomePage> {
 
   void moveLeft() {
     setState(() {
-      if (!(playerPosition % 10 == 0) && !barriers.contains(playerPosition - 1) && !boxes.contains(playerPosition - 1)) {
+      if (!(playerPosition % 10 == 0) &&
+          !barriers.contains(playerPosition - 1) &&
+          !boxes.contains(playerPosition - 1)) {
         playerPosition -= 1;
       }
     });
@@ -42,7 +105,9 @@ class _HomePageState extends State<HomePage> {
 
   void moveRight() {
     setState(() {
-     if (!(playerPosition % 10 == 9) && !barriers.contains(playerPosition + 1) && !boxes.contains(playerPosition + 1)) {
+      if (!(playerPosition % 10 == 9) &&
+          !barriers.contains(playerPosition + 1) &&
+          !boxes.contains(playerPosition + 1)) {
         playerPosition += 1;
       }
     });
@@ -50,9 +115,17 @@ class _HomePageState extends State<HomePage> {
 
   void moveDown() {
     setState(() {
-      if  (playerPosition + 10 < numberOfSquares && !barriers.contains(playerPosition + 10) && !boxes.contains(playerPosition + 10)) {
+      if (playerPosition + 10 < numberOfSquares &&
+          !barriers.contains(playerPosition + 10) &&
+          !boxes.contains(playerPosition + 10)) {
         playerPosition += 10;
       }
+    });
+  }
+
+  void placeBomb() {
+    setState(() {
+      bombPosition = playerPosition;
     });
   }
 
@@ -71,9 +144,10 @@ class _HomePageState extends State<HomePage> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 10),
                     itemBuilder: (BuildContext context, int index) {
-                      if (playerPosition == index) {
+                      if (bombPosition == index) {
                         return MyPixel(
-                          color: Colors.white);
+                          color: Colors.red,
+                        );
                       } else if (barriers.contains(index)) {
                         return MyPixel(
                           color: Colors.black,
@@ -84,10 +158,9 @@ class _HomePageState extends State<HomePage> {
                         );
                       } else {
                         return MyPixel(
-                          child: Text(index.toString()),
-                            color: Colors.grey);
+                            child: Text(index.toString()), color: Colors.grey);
                       }
-                      }),                    
+                    }),
               ),
             ),
             Expanded(
@@ -122,8 +195,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         MyButton(
-                          color: Colors.grey,
-                          child: Image.asset('lib/images/CtCenter.png'),
+                          function: placeBomb,
+                          color: Colors.grey[900],
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Image.asset(
+                              'lib/images/CtCenter.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                         MyButton(
                           function: moveRight,
