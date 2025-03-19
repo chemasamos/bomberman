@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:reproductor_musica/button.dart';
 import 'package:reproductor_musica/pixel.dart';
@@ -10,7 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int numberOfSquares = 130;
   int playerPosition = 0;
-  int bombPosition= -1;
+  int bombPosition = -1;
   List<int> barriers = [
     11,
     13,
@@ -123,9 +125,42 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  List<int> fire = [
+    -1
+  ];
+
   void placeBomb() {
     setState(() {
       bombPosition = playerPosition;
+      fire.clear();
+      Timer(Duration(milliseconds: 1000), (){
+        setState(() {
+
+        fire.add(bombPosition);
+        fire.add(bombPosition-1);
+        fire.add(bombPosition+1);
+        fire.add(bombPosition-10);
+        fire.add(bombPosition+10);
+        });
+        clearFire();
+      });
+
+    });
+  }
+
+  void clearFire(){
+    setState(() {
+      Timer(Duration(milliseconds: 500), (){
+        setState(() {
+          for (int i=0; i<fire.length; i++) {
+            if (boxes.contains(fire[i]) ) {
+              boxes.remove(fire[i]);
+            }
+          }
+          fire.clear();
+          bombPosition = -1;
+        });
+      });
     });
   }
 
@@ -144,21 +179,43 @@ class _HomePageState extends State<HomePage> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 10),
                     itemBuilder: (BuildContext context, int index) {
-                      if (bombPosition == index) {
+                       if (fire.contains(index)) {
                         return MyPixel(
-                          color: Colors.red,
+                          innerColor: Colors.red,
+                          outerColor: Colors.red[900],
+                        );
+                      } else if (bombPosition == index) {
+                        return MyPixel(
+                         innerColor: Colors.green,
+                         outerColor: Colors.green[800],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('lib/images/CtCenter.png'),
+                          ),
+                        );
+                      } else if (playerPosition == index) {
+                        return MyPixel(
+                          innerColor: Colors.green,
+                          outerColor: Colors.green[800],
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Image.asset('lib/images/Nata.jpeg'),
+                            ),
                         );
                       } else if (barriers.contains(index)) {
                         return MyPixel(
-                          color: Colors.black,
+                          innerColor: Colors.black,
+                          outerColor: Colors.black,
                         );
                       } else if (boxes.contains(index)) {
                         return MyPixel(
-                          color: Colors.brown,
+                          innerColor: Colors.brown,
+                          outerColor: Colors.brown[800],
                         );
                       } else {
                         return MyPixel(
-                            child: Text(index.toString()), color: Colors.grey);
+                           innerColor: Colors.green,
+                           outerColor: Colors.green[800],);
                       }
                     }),
               ),
